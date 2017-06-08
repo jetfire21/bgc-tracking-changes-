@@ -78,7 +78,7 @@ class Calendar {
 	function output_calendar( $year = null, $month = null, $calendar_class = 'calendar' ) {
 		global $wp_locale;
 		if ( $this->week_start_on !== false ) {
-			echo "The property week_start_on is replaced due to a bug present in version before 2.6. of this class! Use the property week_start instead!";
+			echo "The property week_start_on is replaced due to a bug present in version before 2.6. of this class! Use the property week_start instead!";		 			 	  	    		 	
 			exit;
 		}
 

@@ -315,6 +315,17 @@ function bp_group_calendar_event_save() {
 			}
 
 		} else { //new event
+			$query = $wpdb->prepare(
+				"SELECT * FROM " . $wpdb->base_prefix . "bp_groups_calendars WHERE group_id='%d' AND user_id='%d' AND event_time='%s' AND event_title='%s' AND event_description='%s' AND event_location='%s'", $group_id, $current_user->ID, $event_date, $event_title, $event_description, $event_location
+			);
+
+			$res = $wpdb->query( $query );
+
+			if( $res != 0 )
+			{
+				bp_core_add_message( __( "Looks like you are creating a duplicate event!", 'groupcalendar' ), 'error' );
+				return;
+			}
 
 			$query = $wpdb->prepare( "INSERT INTO " . $wpdb->base_prefix . "bp_groups_calendars
                             	( group_id, user_id, event_time, event_title, event_description, event_location, event_map, created_stamp, last_edited_id, last_edited_stamp )
@@ -1528,7 +1539,7 @@ class BP_Group_Calendar_Widget_Single extends WP_Widget {
 		};
 
 		$event_date = gmdate( 'Y-m-d H:i:s', ( strtotime( current_time( 'mysql' ) ) - ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );
-		$events     = $wpdb->get_results( $wpdb->prepare( "SELECT gc.id, gc.user_id, gc.event_title, gc.event_time, gp.name, gc.group_id FROM " . $wpdb->base_prefix . "bp_groups_calendars gc JOIN " . $wpdb->base_prefix . "bp_groups gp ON gc.group_id=gp.id WHERE gc.event_time >= %s AND gp.id = %d ORDER BY gc.event_time ASC LIMIT %d", $event_date, (int) $instance['group_id'], (int) $instance['num_events'] ) );	 		 	    			 				 
+		$events     = $wpdb->get_results( $wpdb->prepare( "SELECT gc.id, gc.user_id, gc.event_title, gc.event_time, gp.name, gc.group_id FROM " . $wpdb->base_prefix . "bp_groups_calendars gc JOIN " . $wpdb->base_prefix . "bp_groups gp ON gc.group_id=gp.id WHERE gc.event_time >= %s AND gp.id = %d ORDER BY gc.event_time ASC LIMIT %d", $event_date, (int) $instance['group_id'], (int) $instance['num_events'] ) );
 
 		if ( $events ) {
 
